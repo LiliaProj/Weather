@@ -1,0 +1,21 @@
+*{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+.container{
+    max-width: 1170px;
+    margin: auto;
+}
+nav > div{
+    display: flex;
+    justify-content: space-between;
+}
+.inputDiv{
+    border: 1px inset gray;
+    background-color: honeydew;
+}
+.inputDiv > input{
+    border: none;
+    background-color: honeydew;
+}
