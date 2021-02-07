@@ -2,20 +2,69 @@
     box-sizing: border-box;
     padding: 0;
     margin: 0;
+    font-family: 'Raleway', sans-serif;
 }
 .container{
     max-width: 1170px;
+    padding: 0 10px;
     margin: auto;
+}
+nav{
+    background-color: #211838;
 }
 nav > div{
     display: flex;
     justify-content: space-between;
+    align-items: center;
+}
+h1{
+    color: paleturquoise;
+    text-transform: uppercase;
+}
+h2{
+    text-transform: uppercase;
+    font-size: 20px;
+    color: #211838;
 }
 .inputDiv{
-    border: 1px inset gray;
-    background-color: honeydew;
+    border: 2px inset paleturquoise;
+    border-radius: 3px;
+    background-color: #211838;
+    position: relative;
+    width: 200px;
 }
 .inputDiv > input{
     border: none;
-    background-color: honeydew;
+    background: none;
+    padding: 5px 0 5px 20px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    color: paleturquoise;
+}
+.inputDiv > input::placeholder{
+    color: paleturquoise;
+}
+.fa-search{
+    color: paleturquoise;
+    font-size: 19px;
+    padding: 3px;
+}
+.btn button{
+    cursor: pointer;
+    border: none;
+    background-color: #211838;
+    color: paleturquoise;
+    padding: 10px;
+    margin: 0;
+}
+.activBtn{
+    border: 1px solid #afeeee86 !important;
+    border-bottom: 3px solid paleturquoise !important;
+}
+.divH{
+    display: flex;
+    justify-content: space-between;
 }
