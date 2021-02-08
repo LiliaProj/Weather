@@ -40,25 +40,39 @@ function dayForm(date){
 function createImg(imgSrc){
     return $('<img>').attr("src", `http://openweathermap.org/img/wn/${imgSrc}@2x.png`);
 }
-function weatherToday(data){
+function localTime(dt, timezone){
     let currDate = new Date();
-    let date = new Date((data.dt + data.timezone + currDate.getTimezoneOffset() * 60) * 1000);
+    let newDate = new Date((dt + timezone + currDate.getTimezoneOffset() * 60) * 1000);
+    return newDate;
+}
+function weatherToday(data){
+    let date = localTime(data.dt, data.timezone);
     
     let divCurrent = $('<div>').addClass("divCurrent");
 
     let divH = $('<div>').addClass("divH");
-    divH.append($('<h2>').text("current weather"));
+    divH.append($('<h2>').html("current <br> weather"));
     divH.append($('<h2>').text(data.name +", "+ data.sys.country));
     
-    let hTimeDay = $('<h2>').html($('<br>'));
-    hTimeDay.prepend(dayForm(date));
-    hTimeDay.append(timeForm(date));
+    let hTimeDay = $('<h2>').html(dayForm(date)+"<br>"+timeForm(date));
     divH.append(hTimeDay);
     
     divCurrent.append(divH);
 
     let divCurrWeather = $('<div>').addClass("divCurrWeather");
-    divCurrWeather.append(createImg(data.weather[0].icon));
+    divCurrWeather.html($('<div>')
+    .html(createImg(data.weather[0].icon))
+    .append($('<p>').text(data.weather[0].main)));
+
+    divCurrWeather.append($('<div>')
+    .html($('<p>').addClass("currTemp").html(data.main.temp + "&deg;C"))
+    .append($('<p>').html("Real Feel "+data.main.feels_like+ "&deg;C")));
+
+    divCurrWeather.append($('<div>')
+    .html($('<p>').text("Sunrice: "+ timeForm(localTime(data.sys.sunrise, data.timezone))))
+    .append($('<p>').text("Sunset: "+ timeForm(localTime(data.sys.sunset, data.timezone))))
+    .append($('<p>').text("Duration: "+ timeForm(localTime(data.sys.sunset - data.sys.sunrise, -3600)))));
+
     divCurrent.append(divCurrWeather);
 
     $('main').html(divCurrent);
