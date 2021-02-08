@@ -1,28 +1,30 @@
 $(document).ready(()=>{
-    jsonFunc(apiUrl("weather", "Kyiv, UA"), apiUrl("forecast", "Kyiv, UA"));
+    jsonFunc(apiUrl("weather", "Kyiv, UA"), apiUrl("forecast", "Kyiv, UA"), "Kyiv, UA");
 
     $('#cityInp').keyup((event)=>{
         if(event.keyCode == 13){
             let cityInp = $('#cityInp').val();
-            jsonFunc(apiUrl("weather", cityInp), apiUrl("forecast", cityInp))
+            jsonFunc(apiUrl("weather", cityInp), apiUrl("forecast", cityInp), cityInp);
         }
     });
 });
 
-function jsonFunc(urlW, urlF){
+function jsonFunc(urlW, urlF, cityInp){
     $.getJSON(urlW, (data)=>{
         weatherToday(data);
     }).fail(()=>{
         let divErr = $('<div>').addClass("divErr");
         divErr.append($('<span>').text("404"));
-        divErr.append($('<p>').text("Error"));
+        divErr.append($('<p>').html(`<em>${cityInp}</em> could not be found.<br>Please enter different location`));
+        divErr.append($('<img>').attr("src", "panda.png"));
 
         $('main').html(divErr);
     });
     $.getJSON(urlF, (data)=>{
         console.log(data);
-        let oneDayData = filterForTable(data, 0);
-        $('.divCurrent').append(createTable(oneDayData, data.city.timezone));
+        // let oneDayData = filterForTable(data, 0);
+        let todayData = data.list.slice(0, 7);
+        $('.divCurrent').append(createTable(todayData, data.city.timezone));
     })
 }
 function apiUrl(format, city){
@@ -128,10 +130,15 @@ function filterForTable(data, n){
     return dataOneDay;
 }
 function createTable(data, timeZ){
-    let forecastTable = $('<table>').addClass("forecastTable");
+    let divTable = $('<div>').addClass("forecastTable");
+    let scrollTable = $('<div>');
+    divTable.append(scrollTable);
+    scrollTable.html($('<h2>').text("Hourly"));
+    let forecastTable = $('<table>');
+    scrollTable.append(forecastTable);    
 
     let timeTr = $('<tr>').attr("id", "timeTr");
-    forecastTable.html(timeTr.html($('<td>').text("Today")));
+    forecastTable.append(timeTr.html($('<td>').text(dayForm2(localTime(data[0].dt, timeZ)))));
     let imgTr = $('<tr>').attr("id", "imgTr");
     forecastTable.append(imgTr.html($('<td>').text(" ")));
     let forTr = $('<tr>').attr("id", "forTr");
@@ -146,12 +153,12 @@ function createTable(data, timeZ){
     console.log(data);
     $.each(data, (key, value)=>{
         timeTr.append($('<td>').text(timeForm(localTime(value.dt, timeZ))));
-        imgTr.append(createImg(value.weather[0].icon));
-        forTr.append(value.weather[0].main);
-        tempTr.append(Math.trunc(value.main.temp) + "&deg;");
-        feelTr.append(Math.trunc(value.main.feels_like) + "&deg;");
-        windTr.append(Math.trunc(value.wind.speed*3.6));
+        imgTr.append($('<td>').html(createImg(value.weather[0].icon)));
+        forTr.append($('<td>').text(value.weather[0].main));
+        tempTr.append($('<td>').html(Math.trunc(value.main.temp) + "&deg;"));
+        feelTr.append($('<td>').html(Math.trunc(value.main.feels_like) + "&deg;"));
+        windTr.append($('<td>').text(Math.trunc(value.wind.speed*3.6)));
     });
 
-    return forecastTable;
+    return divTable;
 }
