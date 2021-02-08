@@ -11,8 +11,6 @@ $(document).ready(()=>{
 
 function jsonFunc(urlW, urlF){
     $.getJSON(urlW, (data)=>{
-        console.log(data);
-
         weatherToday(data);
     }).fail(()=>{
         let divErr = $('<div>').addClass("divErr");
@@ -22,7 +20,9 @@ function jsonFunc(urlW, urlF){
         $('main').html(divErr);
     });
     $.getJSON(urlF, (data)=>{
-        console.log(data.list[0].main.temp);
+        console.log(data);
+        let oneDayData = filterForTable(data, 0);
+        $('.divCurrent').append(createTable(oneDayData, data.city.timezone));
     })
 }
 function apiUrl(format, city){
@@ -32,10 +32,52 @@ function formatOfDate(time) {
     return +time < 10 ? '0' + time : time;
 }
 function timeForm(date){
-    return formatOfDate(date.getHours())+":"+formatOfDate(date.getMinutes())+":"+formatOfDate(date.getSeconds());
+    return formatOfDate(date.getHours())+":"+formatOfDate(date.getMinutes());
 }
 function dayForm(date){
     return formatOfDate(date.getDate())+"."+formatOfDate(date.getMonth()+1)+"."+date.getFullYear();
+}
+function dayForm2(date){
+    let month = '';
+    switch(date.getMonth()){
+        case 0:
+            month = 'Jan';
+            break;
+        case 1:
+            month = 'Feb';
+            break;
+        case 2:
+            month = 'Mar';
+            break;
+        case 3:
+            month = 'Apr';
+            break;
+        case 4:
+            month = 'May';
+            break;
+        case 5:
+            month = 'June';
+            break;
+        case 6:
+            month = 'July';
+            break;
+        case 7:
+            month = 'Aug';
+            break;
+        case 8:
+            month = 'Sept';
+            break;
+        case 9:
+            month = 'Oct';
+            break;
+        case 10:
+            month = 'Nov';
+            break;
+        case 11:
+            month = 'Dec';
+            break;
+    }
+    return month + " " + formatOfDate(date.getDate());
 }
 function createImg(imgSrc){
     return $('<img>').attr("src", `http://openweathermap.org/img/wn/${imgSrc}@2x.png`);
@@ -53,9 +95,7 @@ function weatherToday(data){
     let divH = $('<div>').addClass("divH");
     divH.append($('<h2>').html("current <br> weather"));
     divH.append($('<h2>').text(data.name +", "+ data.sys.country));
-    
-    let hTimeDay = $('<h2>').html(dayForm(date)+"<br>"+timeForm(date));
-    divH.append(hTimeDay);
+    divH.append($('<h2>').html(dayForm(date)+"<br>"+timeForm(date)));
     
     divCurrent.append(divH);
 
@@ -65,8 +105,8 @@ function weatherToday(data){
     .append($('<p>').text(data.weather[0].main)));
 
     divCurrWeather.append($('<div>')
-    .html($('<p>').addClass("currTemp").html(data.main.temp + "&deg;C"))
-    .append($('<p>').html("Real Feel "+data.main.feels_like+ "&deg;C")));
+    .html($('<p>').addClass("currTemp").html(Math.trunc(data.main.temp) + "&deg;C"))
+    .append($('<p>').html("Real Feel "+ Math.trunc(data.main.feels_like)+ "&deg;C")));
 
     divCurrWeather.append($('<div>')
     .html($('<p>').text("Sunrice: "+ timeForm(localTime(data.sys.sunrise, data.timezone))))
@@ -76,4 +116,42 @@ function weatherToday(data){
     divCurrent.append(divCurrWeather);
 
     $('main').html(divCurrent);
+}
+function filterForTable(data, n){
+    let dataOneDay = data.list.filter(item => {
+        let newDay = dayForm(localTime(item.dt, data.city.timezone));
+        let filterDay = dayForm(localTime(data.list[0].dt + 24*60*60*n, data.city.timezone));
+        if(newDay === filterDay){
+            return true;
+        }
+    });
+    return dataOneDay;
+}
+function createTable(data, timeZ){
+    let forecastTable = $('<table>').addClass("forecastTable");
+
+    let timeTr = $('<tr>').attr("id", "timeTr");
+    forecastTable.html(timeTr.html($('<td>').text("Today")));
+    let imgTr = $('<tr>').attr("id", "imgTr");
+    forecastTable.append(imgTr.html($('<td>').text(" ")));
+    let forTr = $('<tr>').attr("id", "forTr");
+    forecastTable.append(forTr.html($('<td>').text("Forecast")))
+    let tempTr = $('<tr>').attr("id", "tempTr");
+    forecastTable.append(tempTr.html($('<td>').html("Temp (&deg;C)")));
+    let feelTr = $('<tr>').attr("id", "feelTr");
+    forecastTable.append(feelTr.html($('<td>').html("Real Fell")));
+    let windTr = $('<tr>').attr("id", "windTr");
+    forecastTable.append(windTr.html($('<td>').html("Wind (km/h)")));
+
+    console.log(data);
+    $.each(data, (key, value)=>{
+        timeTr.append($('<td>').text(timeForm(localTime(value.dt, timeZ))));
+        imgTr.append(createImg(value.weather[0].icon));
+        forTr.append(value.weather[0].main);
+        tempTr.append(Math.trunc(value.main.temp) + "&deg;");
+        feelTr.append(Math.trunc(value.main.feels_like) + "&deg;");
+        windTr.append(Math.trunc(value.wind.speed*3.6));
+    });
+
+    return forecastTable;
 }
