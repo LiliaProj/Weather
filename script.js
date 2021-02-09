@@ -12,11 +12,17 @@ $(document).ready(()=>{
 function jsonFunc(urlW, urlF, cityInp){
     $.getJSON(urlW, (data)=>{
         weatherToday(data);
+        $('#weatherBtn').on("click", ()=>{
+            weatherToday(data);
+        });
     }).fail(()=>{
         let divErr = $('<div>').addClass("divErr");
         divErr.append($('<span>').text("404"));
         divErr.append($('<p>').html(`<em>${cityInp}</em> could not be found.<br>Please enter different location`));
         divErr.append($('<img>').attr("src", "panda.png"));
+
+        $('#forecastBtn').prop("disabled", true);
+        $('#weatherBtn').prop("disabled", true);
 
         $('main').html(divErr);
     });
@@ -24,7 +30,13 @@ function jsonFunc(urlW, urlF, cityInp){
         console.log(data);
         // let oneDayData = filterForTable(data, 0);
         let todayData = data.list.slice(0, 7);
-        $('.divCurrent').append(createTable(todayData, data.city.timezone));
+        $('.divCurrent').append(createTable(todayData, data.city.timezone, "Today"));
+        $('#weatherBtn').click(()=>{
+            $('.divCurrent').append(createTable(todayData, data.city.timezone, "Today"));
+        })
+        $('#forecastBtn').on("click", ()=>{
+            forecastPage(data);
+        });
     })
 }
 function apiUrl(format, city){
@@ -81,6 +93,33 @@ function dayForm2(date){
     }
     return month + " " + formatOfDate(date.getDate());
 }
+function dayOfWeek(date){
+    let day = "";
+    switch (date.getDay()){
+        case 0:
+            day = 'Sunday';
+            break;
+        case 1:
+            day = 'Monday';
+            break;
+        case 2:
+            day = 'Tuesday';
+            break;
+        case 3:
+            day = 'Wednesday';
+            break;
+        case 4:
+            day = 'Thursday';
+            break;
+        case 5:
+            day = 'Friday';
+            break;
+        case 6:
+            day = 'Saturday';
+            break;
+    }
+    return day;
+}
 function createImg(imgSrc){
     return $('<img>').attr("src", `http://openweathermap.org/img/wn/${imgSrc}@2x.png`);
 }
@@ -90,6 +129,11 @@ function localTime(dt, timezone){
     return newDate;
 }
 function weatherToday(data){
+    $('#weatherBtn').addClass("activBtn");
+    $('#weatherBtn').prop("disabled", true);
+    $('#forecastBtn').removeClass("activBtn");
+    $('#forecastBtn').prop("disabled", false);
+
     let date = localTime(data.dt, data.timezone);
     
     let divCurrent = $('<div>').addClass("divCurrent");
@@ -129,16 +173,16 @@ function filterForTable(data, n){
     });
     return dataOneDay;
 }
-function createTable(data, timeZ){
+function createTable(data, timeZ, day){
     let divTable = $('<div>').addClass("forecastTable");
-    let scrollTable = $('<div>');
+    let scrollTable = $('<div>').addClass("scrollBox");
     divTable.append(scrollTable);
     scrollTable.html($('<h2>').text("Hourly"));
     let forecastTable = $('<table>');
     scrollTable.append(forecastTable);    
 
     let timeTr = $('<tr>').attr("id", "timeTr");
-    forecastTable.append(timeTr.html($('<td>').text(dayForm2(localTime(data[0].dt, timeZ)))));
+    forecastTable.append(timeTr.html($('<td>').text(day)));
     let imgTr = $('<tr>').attr("id", "imgTr");
     forecastTable.append(imgTr.html($('<td>').text(" ")));
     let forTr = $('<tr>').attr("id", "forTr");
@@ -161,4 +205,47 @@ function createTable(data, timeZ){
     });
 
     return divTable;
+}
+function forecastPage(data){
+    $('#forecastBtn').addClass("activBtn");
+    $('#forecastBtn').prop("disabled", true);
+    $('#weatherBtn').removeClass("activBtn");
+    $('#weatherBtn').prop("disabled", false);
+
+    let divForecast = $('<div>').addClass("divForecast");
+    let mainBoxF = $('<div>').addClass("mainForecast").html($('<h2>').text(data.city.name +", "+ data.city.country));
+    divForecast.html(mainBoxF);
+    let scrollFor = $('<div>').addClass("scrollBox");
+    mainBoxF.append(scrollFor);
+
+    for(let i=0; i<5; i++){
+        let boxOneDay = $('<div>').addClass("boxOneDay");
+        let oneDayData = filterForTable(data, i);
+        scrollFor.append(boxOneDay);
+
+        if(i == 0){
+            oneDayData = data.list.slice(0, 7);
+            boxOneDay.addClass("activBox");
+            divForecast.append(createTable(oneDayData, data.city.timezone, "Today"));
+        }
+        boxOneDay.html($('<h2>').text(dayOfWeek(localTime(oneDayData[0].dt ,data.city.timezone))))
+        .append($('<p>').text(dayForm2(localTime(oneDayData[0].dt ,data.city.timezone))))
+        .append(createImg(oneDayData[4].weather[0].icon))
+        .append($('<p>').addClass("currTemp").html(Math.trunc(oneDayData[4].main.temp) + "&deg;C"))
+        .append($('<p>').text(oneDayData[4].weather[0].description))
+
+        boxOneDay.click(()=>{
+            $('.forecastTable').remove();
+            if(i == 0){
+                divForecast.append(createTable(oneDayData, data.city.timezone, "Today"));
+            }
+            else{
+                divForecast.append(createTable(oneDayData, data.city.timezone, dayOfWeek(localTime(oneDayData[0].dt ,data.city.timezone))));
+            }
+            $('.boxOneDay').removeClass("activBox");
+            boxOneDay.addClass("activBox");
+        })
+    }
+
+    $('main').html(divForecast);
 }
