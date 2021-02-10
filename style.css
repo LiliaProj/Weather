@@ -15,6 +15,9 @@ body{
 }
 nav{
     background-color: #211838;
+    position: fixed;
+    width: 100%;
+    top: 0;
 }
 nav > div{
     display: flex;
@@ -22,7 +25,7 @@ nav > div{
     align-items: center;
 }
 main{
-    height: calc(100% - 98px);
+    height: calc(100% - 200px);
 }
 h1{
     color: paleturquoise;
@@ -91,7 +94,7 @@ footer{
     align-items: center;
     padding: 10px 30px;
     background-color: lightgoldenrodyellow;
-    margin-top: 15px;
+    margin-top: 50px;
     border-radius: 5px  5px 0 0;
     border-bottom: 1px solid #caeeee;
 }
@@ -153,6 +156,7 @@ footer{
     padding: 50px;
     border-radius: 5px;
     margin: 15px;
+    margin-top: 50px;
 }
 .divErr span{
     font-size: 100px;
@@ -174,7 +178,7 @@ footer{
     border-radius: 5px;
     padding: 10px 0;
     overflow-x: scroll;
-    margin: 15px auto;
+    margin: 50px auto 15px;
 }
 .mainForecast > div{
     display: flex;
