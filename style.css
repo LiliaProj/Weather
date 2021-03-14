@@ -1,10 +1,12 @@
 *{
+    -webkit-box-sizing: border-box;
     box-sizing: border-box;
     padding: 0;
     margin: 0;
     font-family: 'Raleway', sans-serif;
 }
 body{
+    background: -webkit-gradient(linear, left bottom, left top, from(#ffffff), to(#add8e6));
     background: linear-gradient(0deg, #ffffff 0%, #add8e6 100%);
     background-repeat: no-repeat;
 }
@@ -20,8 +22,14 @@ nav{
     top: 0;
 }
 nav > div{
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
     justify-content: space-between;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
 }
 main{
@@ -67,6 +75,12 @@ footer{
     height: 100%;
     color: paleturquoise;
 }
+.inputDiv > input::-webkit-input-placeholder{
+    color: paleturquoise;
+}
+.inputDiv > input:-ms-input-placeholder{
+    color: paleturquoise;
+}
 .inputDiv > input::placeholder{
     color: paleturquoise;
 }
@@ -89,18 +103,29 @@ footer{
     cursor: auto !important;
 }
 .divH{
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
     justify-content: space-between;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
     padding: 10px 30px;
     background-color: lightgoldenrodyellow;
-    margin-top: 50px;
+    margin-top: 90px;
     border-radius: 5px  5px 0 0;
     border-bottom: 1px solid #caeeee;
 }
 .divCurrWeather{
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -ms-flex-pack: distribute;
     justify-content: space-around;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
     text-align: center;
     font-size: 20px;
@@ -156,7 +181,7 @@ footer{
     padding: 50px;
     border-radius: 5px;
     margin: 15px;
-    margin-top: 50px;
+    margin-top: 90px;
 }
 .divErr span{
     font-size: 100px;
@@ -178,9 +203,11 @@ footer{
     border-radius: 5px;
     padding: 10px 0;
     overflow-x: scroll;
-    margin: 50px auto 15px;
+    margin: 90px auto 15px;
 }
 .mainForecast > div{
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
 }
 .mainForecast > h2{

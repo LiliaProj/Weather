@@ -28,7 +28,6 @@ function jsonFunc(urlW, urlF, cityInp){
     });
     $.getJSON(urlF, (data)=>{
         console.log(data);
-        // let oneDayData = filterForTable(data, 0);
         let todayData = data.list.slice(0, 7);
         $('.divCurrent').append(createTable(todayData, data.city.timezone, "Today"));
         $('#weatherBtn').click(()=>{
