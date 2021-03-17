@@ -1,10 +1,17 @@
 $(document).ready(()=>{
-    jsonFunc(apiUrl("weather", "Kyiv, UA"), apiUrl("forecast", "Kyiv, UA"), "Kyiv, UA");
+
+    let city1 = "Kyiv, UA";
+    let urlW1 = apiUrl("weather", "Kyiv, UA");
+    let urlF1 = apiUrl("forecast", "Kyiv, UA");
+    jsonFunc(urlW1, urlF1, city1);
 
     $('#cityInp').keyup((event)=>{
         if(event.keyCode == 13){
             let cityInp = $('#cityInp').val();
-            jsonFunc(apiUrl("weather", cityInp), apiUrl("forecast", cityInp), cityInp);
+            let urlW = apiUrl("weather", cityInp);
+            let urlF = apiUrl("forecast", cityInp);
+
+            jsonFunc(urlW, urlF, cityInp);
         }
     });
 });
@@ -19,7 +26,7 @@ function jsonFunc(urlW, urlF, cityInp){
         let divErr = $('<div>').addClass("divErr");
         divErr.append($('<span>').text("404"));
         divErr.append($('<p>').html(`<em>${cityInp}</em> could not be found.<br>Please enter different location`));
-        divErr.append($('<img>').attr("src", "panda.png"));
+        divErr.append($('<img>').attr("src", "img/panda.png"));
 
         $('#forecastBtn').prop("disabled", true);
         $('#weatherBtn').prop("disabled", true);
@@ -27,7 +34,7 @@ function jsonFunc(urlW, urlF, cityInp){
         $('main').html(divErr);
     });
     $.getJSON(urlF, (data)=>{
-        console.log(data);
+        // console.log(data);
         let todayData = data.list.slice(0, 7);
         $('.divCurrent').append(createTable(todayData, data.city.timezone, "Today"));
         $('#weatherBtn').click(()=>{
@@ -193,7 +200,7 @@ function createTable(data, timeZ, day){
     let windTr = $('<tr>').attr("id", "windTr");
     forecastTable.append(windTr.html($('<td>').html("Wind (km/h)")));
 
-    console.log(data);
+    // console.log(data);
     $.each(data, (key, value)=>{
         timeTr.append($('<td>').text(timeForm(localTime(value.dt, timeZ))));
         imgTr.append($('<td>').html(createImg(value.weather[0].icon)));
