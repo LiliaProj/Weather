@@ -1,23 +1,24 @@
+//головна функція, що виконується одразу після завантаження DOM (читання вмісту поля вводу та передача отриманої інформації у функцію, що опрацьовує JSON-дані)
 $(document).ready(()=>{
 
     let city1 = "Kyiv, UA";
-    let urlW1 = apiUrl("weather", "Kyiv, UA");
-    let urlF1 = apiUrl("forecast", "Kyiv, UA");
-    jsonFunc(urlW1, urlF1, city1);
+    let url1 = apiUrl("Kyiv, UA");
+    jsonFunc(url1, city1);
 
     $('#cityInp').keyup((event)=>{
         if(event.keyCode == 13){
             let cityInp = $('#cityInp').val();
-            let urlW = apiUrl("weather", cityInp);
-            let urlF = apiUrl("forecast", cityInp);
+            let url = apiUrl(cityInp);
 
-            jsonFunc(urlW, urlF, cityInp);
+            jsonFunc(url, cityInp);
         }
     });
 });
 
-function jsonFunc(urlW, urlF, cityInp){
-    $.getJSON(urlW, (data)=>{
+//функція для отримання JSON даних
+function jsonFunc(url, cityInp){
+    $.getJSON(url.weather, (data)=>{
+        // console.log(data);
         weatherToday(data);
         $('#weatherBtn').on("click", ()=>{
             weatherToday(data);
@@ -33,7 +34,7 @@ function jsonFunc(urlW, urlF, cityInp){
 
         $('main').html(divErr);
     });
-    $.getJSON(urlF, (data)=>{
+    $.getJSON(url.forecast, (data)=>{
         // console.log(data);
         let todayData = data.list.slice(0, 7);
         $('.divCurrent').append(createTable(todayData, data.city.timezone, "Today"));
@@ -45,18 +46,31 @@ function jsonFunc(urlW, urlF, cityInp){
         });
     })
 }
-function apiUrl(format, city){
-    return `http://api.openweathermap.org/data/2.5/${format}?q=${city}&units=metric&appid=7477f819d6921e9897673c8c6ae3542d`;
-}
+
+//формування URL
+function apiUrl(city){
+    return {
+        weather:`http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=7477f819d6921e9897673c8c6ae3542d`,
+        forecast:`http://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=7477f819d6921e9897673c8c6ae3542d`
+    }
+} 
+
+//функція додавання нуля перед годинами/хвилинами
 function formatOfDate(time) {
     return +time < 10 ? '0' + time : time;
 }
+
+//повертає час у форматі hh:mm
 function timeForm(date){
     return formatOfDate(date.getHours())+":"+formatOfDate(date.getMinutes());
 }
+
+//повертає дату у форматі dd.mm.yyyy
 function dayForm(date){
     return formatOfDate(date.getDate())+"."+formatOfDate(date.getMonth()+1)+"."+date.getFullYear();
 }
+
+//повертає дату у форматі Month(скорочено) dd
 function dayForm2(date){
     let month = '';
     switch(date.getMonth()){
@@ -99,6 +113,8 @@ function dayForm2(date){
     }
     return month + " " + formatOfDate(date.getDate());
 }
+
+//повертає день тиждня
 function dayOfWeek(date){
     let day = "";
     switch (date.getDay()){
@@ -126,14 +142,20 @@ function dayOfWeek(date){
     }
     return day;
 }
+
+//створює новий тег зображення з посиланням
 function createImg(imgSrc){
     return $('<img>').attr("src", `http://openweathermap.org/img/wn/${imgSrc}@2x.png`);
 }
+
+//розраховує локальний час, беручи до уваги часові пояси даного місцезнаходження та заданого регіону
 function localTime(dt, timezone){
     let currDate = new Date();
     let newDate = new Date((dt + timezone + currDate.getTimezoneOffset() * 60) * 1000);
     return newDate;
 }
+
+//асинхронна побудова DOM з інформацією про погоду на даний час
 function weatherToday(data){
     $('#weatherBtn').addClass("activBtn");
     $('#weatherBtn').prop("disabled", true);
@@ -163,12 +185,14 @@ function weatherToday(data){
     divCurrWeather.append($('<div>')
     .html($('<p>').text("Sunrice: "+ timeForm(localTime(data.sys.sunrise, data.timezone))))
     .append($('<p>').text("Sunset: "+ timeForm(localTime(data.sys.sunset, data.timezone))))
-    .append($('<p>').text("Duration: "+ timeForm(localTime(data.sys.sunset - data.sys.sunrise, -3600)))));
+    .append($('<p>').text("Duration: "+ timeForm(localTime(data.sys.sunset - data.sys.sunrise, 0)))));
 
     divCurrent.append(divCurrWeather);
 
     $('main').html(divCurrent);
 }
+
+//фільтрування даних про прогноз погоди на заданий n-ний день від данного (сьогодні => n=0)
 function filterForTable(data, n){
     let dataOneDay = data.list.filter(item => {
         let newDay = dayForm(localTime(item.dt, data.city.timezone));
@@ -179,6 +203,8 @@ function filterForTable(data, n){
     });
     return dataOneDay;
 }
+
+//асинхронна побудова таблиці з інформацією про прогноз погоди на кожні три години заданого дня
 function createTable(data, timeZ, day){
     let divTable = $('<div>').addClass("forecastTable");
     let scrollTable = $('<div>').addClass("scrollBox");
@@ -212,6 +238,8 @@ function createTable(data, timeZ, day){
 
     return divTable;
 }
+
+//асинхронна побудова DOM з інформацією про прогноз погоди на 5 днів
 function forecastPage(data){
     $('#forecastBtn').addClass("activBtn");
     $('#forecastBtn').prop("disabled", true);
