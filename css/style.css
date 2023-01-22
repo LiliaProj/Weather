@@ -7,8 +7,24 @@
 }
 body{
     background: -webkit-gradient(linear, left bottom, left top, from(#ffffff), to(#add8e6));
+    background: -o-linear-gradient(bottom, #ffffff 0%, #add8e6 100%);
     background: linear-gradient(0deg, #ffffff 0%, #add8e6 100%);
     background-repeat: no-repeat;
+}
+body::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+    background-color: #f9f9fd;
+}
+body::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #38006a;
+}
+body::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
+            box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
+    border-radius: 10px;
+    background-color: #f9f9fd;
 }
 .container{
     max-width: 1170px;
@@ -81,6 +97,12 @@ footer{
 .inputDiv > input:-ms-input-placeholder{
     color: paleturquoise;
 }
+.inputDiv > input::-moz-placeholder{
+    color: paleturquoise;
+}
+.inputDiv > input::-ms-input-placeholder{
+    color: paleturquoise;
+}
 .inputDiv > input::placeholder{
     color: paleturquoise;
 }
@@ -113,7 +135,7 @@ footer{
     -ms-flex-align: center;
     align-items: center;
     padding: 10px 30px;
-    background-color: lightgoldenrodyellow;
+    background-color: #f0fbff;
     margin-top: 90px;
     border-radius: 5px  5px 0 0;
     border-bottom: 1px solid #caeeee;
@@ -129,7 +151,7 @@ footer{
     align-items: center;
     text-align: center;
     font-size: 20px;
-    background-color: lightgoldenrodyellow;
+    background-color: #f0fbff;
     border-radius: 0 0 5px 5px;
     padding-bottom: 10px;
     margin-bottom: 15px;
@@ -146,11 +168,26 @@ footer{
     font-weight: 700;
 }
 .forecastTable{
-    background-color: lightgoldenrodyellow;
+    background-color: #f0fbff;
     border-radius: 5px;
     padding: 10px 20px;
-    overflow-x: scroll;
+    overflow-x: auto;
     margin-bottom: 55px;
+}
+.forecastTable::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+    background-color: #f9f9fd;
+}
+.forecastTable::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #38006a;
+}
+.forecastTable::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
+            box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
+    border-radius: 10px;
+    background-color: #f9f9fd;
 }
 .scrollBox{
     width: 1100px;
@@ -176,7 +213,7 @@ footer{
     padding-bottom: 10px;
 }
 .divErr{
-    background-color: lightgoldenrodyellow;
+    background-color: #f0fbff;
     text-align: center;
     padding: 50px;
     border-radius: 5px;
@@ -199,11 +236,26 @@ footer{
     height: 200px;
 }
 .mainForecast{
-    background-color: lightgoldenrodyellow;
+    background-color: #f0fbff;
     border-radius: 5px;
     padding: 10px 0;
-    overflow-x: scroll;
+    overflow-x: auto;
     margin: 90px auto 15px;
+}
+.mainForecast::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+    background-color: #f9f9fd;
+}
+.mainForecast::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #38006a;
+}
+.mainForecast::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
+            box-shadow: inset 0 0 6px rgba(0,0,0,0.2);
+    border-radius: 10px;
+    background-color: #f9f9fd;
 }
 .mainForecast > div{
     display: -webkit-box;
@@ -223,7 +275,7 @@ footer{
     cursor: pointer;
 }
 .activBox{
-    background-color: lightgoldenrodyellow;
+    background-color: #f0fbff;
     cursor: auto;
 }
 .boxOneDay p:not(.currTemp){
